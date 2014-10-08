@@ -1,4 +1,5 @@
 package com.example.cameratest;
+
 // This project is adopted from https://eclass.srv.ualberta.ca/mod/resource/view.php?id=1136415
 import java.io.File;
 
@@ -19,66 +20,66 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-    Uri imageFileUri;
-    
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        
-        ImageButton button = (ImageButton) findViewById(R.id.TakeAPhoto);
-        OnClickListener listener = new OnClickListener() {
-            public void onClick(View v){
-                takeAPhoto();
-            }
-        };
-        button.setOnClickListener(listener);
-    }
+	Uri imageFileUri;
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
-    
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 12345;
-    
-    //This method creates an intent. 
-    //It is told that we need camera action, and the results should be saved in a location that is sent to the intent.
-    public void takeAPhoto() {
-		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyCameraTest";
-		File folder = new File(path);
-		if (!folder.exists())	
-			folder.mkdir();
-		//TODO: Add your code here...
-		//TODO: Add your code here...
-		//TODO: Add your code here...
-		//TODO: Add your code here...
-		//TODO: Add your code here...
-		//TODO: Add your code here...
-		//TODO: Add your code here...
-		//TODO: Add your code here...
-    }
-    
-    //This method is run after returning back from camera activity:
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
-			TextView tv = (TextView)findViewById(R.id.status);
-			
-			if (resultCode == RESULT_OK){
-				//TODO: Add your code here...
-				//TODO: Add your code here...
-				//TODO: Add your code here...
-				//TODO: Add your code here...
-				//TODO: Add your code here...
-				//TODO: Add your code here...
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+
+		ImageButton button = (ImageButton) findViewById(R.id.TakeAPhoto);
+		OnClickListener listener = new OnClickListener() {
+			public void onClick(View v) {
+				takeAPhoto();
 			}
-			else
-				if (resultCode == RESULT_CANCELED){
-					tv.setText("Photo was canceled!");
-				}
-				else
-					tv.setText("What happened?!!");
+		};
+		button.setOnClickListener(listener);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 12345;
+
+	// This method creates an intent.
+	// It is told that we need camera action, and the results should be saved in
+	// a location that is sent to the intent.
+	public void takeAPhoto() {
+		String path = Environment.getExternalStorageDirectory()
+				.getAbsolutePath() + "/MyCameraTest";
+		File folder = new File(path);
+		if (!folder.exists())
+			folder.mkdir();
+
+		String imagePathAndFileName = path + File.separator
+				+ String.valueOf(System.currentTimeMillis() + ".jpg");
+		File imageFile = new File(imagePathAndFileName);
+		imageFileUri = Uri.fromFile(imageFile);
+
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
+		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
+	}
+
+	// This method is run after returning back from camera activity:
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+			TextView tv = (TextView) findViewById(R.id.status);
+
+			if (resultCode == RESULT_OK) {
+				tv.setText("Photo completed!");
+				ImageButton ib = (ImageButton) findViewById(R.id.TakeAPhoto);
+				ib.setImageDrawable(Drawable.createFromPath(imageFileUri
+						.getPath()));
+
+			} else if (resultCode == RESULT_CANCELED) {
+				tv.setText("Photo was canceled!");
+			} else
+				tv.setText("What happened?!!");
 		}
-    }
+	}
 }
